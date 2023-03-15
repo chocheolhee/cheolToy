@@ -1,10 +1,16 @@
 package com.cheol.toy.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.ToString;
 
 @Data
+@ToString
 public class PostCreate {
 
-    public String title;
-    public String content;
+    @NotBlank
+    private String title;
+
+    @NotBlank
+    private String content;
 }

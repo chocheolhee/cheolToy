@@ -29,4 +29,16 @@ class PostControllerTest {
                 .andExpect(content().string("Hello World"))
                 .andDo(print());
     }
+
+    @Test
+    @DisplayName("/posts 요청 시 title 값은 필수")
+    void test2() throws Exception {
+        // expected
+        mockMvc.perform(MockMvcRequestBuilders.post("/posts")
+
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().string("Hello World"))
+                .andDo(print());
+    }
 }

@@ -1,5 +1,6 @@
 package com.cheol.toy.controller;
 
+import com.cheol.toy.domain.Post;
 import com.cheol.toy.request.PostCreate;
 import com.cheol.toy.service.PostService;
 import jakarta.validation.Valid;
@@ -24,7 +25,7 @@ public class PostController {
         return "Hello World";
     }
 
-//    @PostMapping("/posts")
+    //    @PostMapping("/posts")
     public String post(@RequestBody @Valid PostCreate params, BindingResult result) {
 
         if (result.hasErrors()) {
@@ -34,11 +35,12 @@ public class PostController {
         return "Hello World";
     }
 
+    /**
+     * Case 1. 저장한 데이터 Entity -> response로 응답하기.
+     * Case 2. 저장한 데이터의 primary_id -> response로 응답하기.
+     */
     @PostMapping("/posts")
-    public Map<String,String> postV2(@RequestBody @Valid PostCreate request) {
-
+    public void postV2(@RequestBody @Valid PostCreate request) {
         postService.write(request);
-
-        return Map.of();
     }
 }

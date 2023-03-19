@@ -2,6 +2,7 @@ package com.cheol.toy.controller;
 
 import com.cheol.toy.domain.Post;
 import com.cheol.toy.request.PostCreate;
+import com.cheol.toy.response.PostResponse;
 import com.cheol.toy.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -20,7 +20,7 @@ public class PostController {
 
     private final PostService postService;
 
-    @GetMapping("/posts")
+//    @GetMapping("/posts")
     public String get() {
         return "Hello World";
     }
@@ -47,9 +47,20 @@ public class PostController {
     /**
      * /posts -> 글 전체 조회 ( 검색 + 페이징 )
      * /posts/{postId} -> 글 한 개만 조회
+     * Request Class 분리
+     * Response Class 분리
      */
     @GetMapping("/posts/{postId}")
-    public Post get(@PathVariable(name = "postId") Long id) {
-        return postService.get(id);
+    public PostResponse get(@PathVariable(name = "postId") Long postId) {
+        return postService.get(postId);
+    }
+
+    /**
+     * 여러개의 글을 조회 API
+     * /posts
+     */
+    @GetMapping("/posts")
+    public List<PostResponse> getList() {
+        return postService.getList();
     }
 }

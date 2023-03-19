@@ -3,12 +3,15 @@ package com.cheol.toy.service;
 import com.cheol.toy.domain.Post;
 import com.cheol.toy.repository.PostRepository;
 import com.cheol.toy.request.PostCreate;
+import com.cheol.toy.response.PostResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -56,13 +59,35 @@ class PostServiceTest {
         postRepository.save(requestPost);
 
         //when
-        Post post = postService.get(requestPost.getId());
+        PostResponse response = postService.get(requestPost.getId());
 
         //then
-        assertNotNull(post);
-        assertEquals("foo", post.getTitle());
-        assertEquals("bar", post.getContent());
+        assertNotNull(response);
+        assertEquals(1L, postRepository.count());
+        assertEquals("foo", response.getTitle());
+        assertEquals("bar", requestPost.getContent());
+    }
 
+    @Test
+    @DisplayName("글 여러개 조회")
+    void test3() {
+        //given
+        postRepository.saveAll(List.of(
+                Post.builder()
+                        .title("foo1")
+                        .content("bar1")
+                        .build(),
+                Post.builder()
+                        .title("foo2")
+                        .content("bar2")
+                        .build()
+        ));
+
+        //when
+        List<PostResponse> posts = postService.getList();
+
+        //then
+        assertEquals(2L, posts.size());
     }
 
 }

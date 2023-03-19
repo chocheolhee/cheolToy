@@ -43,4 +43,13 @@ public class PostController {
     public void postV2(@RequestBody @Valid PostCreate request) {
         postService.write(request);
     }
+
+    /**
+     * /posts -> 글 전체 조회 ( 검색 + 페이징 )
+     * /posts/{postId} -> 글 한 개만 조회
+     */
+    @GetMapping("/posts/{postId}")
+    public Post get(@PathVariable(name = "postId") Long id) {
+        return postService.get(id);
+    }
 }

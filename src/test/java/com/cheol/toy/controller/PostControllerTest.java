@@ -14,10 +14,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 class PostControllerTest {
@@ -36,30 +37,6 @@ class PostControllerTest {
         postRepository.deleteAll();
     }
 
-//    @Test
-//    @DisplayName("/posts 요청 시 Hello World 를 출력")
-//    void test() throws Exception {
-//        // expected
-//        mockMvc.perform(post("/posts")
-//
-//                )
-//                .andExpect(status().isOk())
-//                .andExpect(content().string("Hello World"))
-//                .andDo(print());
-//    }
-
-//    @Test
-//    @DisplayName("/posts 요청 시 title 값은 필수")
-//    void test2() throws Exception {
-//        // expected
-//        mockMvc.perform(post("/posts")
-//
-//                )
-//                .andExpect(status().isOk())
-//                .andExpect(content().string("Hello World"))
-//                .andDo(print());
-//    }
-
     @Test
     @DisplayName("/posts 요청시 Hello World를 출력한다.")
     void test() throws Exception {
@@ -71,9 +48,9 @@ class PostControllerTest {
         String json = objectMapper.writeValueAsString(request);
 
         // expected
-       mockMvc.perform(post("/posts")
-                       .contentType(APPLICATION_JSON)
-                       .content(json)
+        mockMvc.perform(post("/posts")
+                        .contentType(APPLICATION_JSON)
+                        .content(json)
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().string(""))
@@ -98,5 +75,25 @@ class PostControllerTest {
         Post post = postRepository.findAll().get(0);
         assertEquals("제목입니다.", post.getTitle());
         assertEquals("내용입니다.", post.getContent());
+    }
+
+    @Test
+    @DisplayName("글 1개 조회")
+    void test4() throws Exception {
+        //given
+        Post post = Post.builder()
+                .title("foo")
+                .content("bar")
+                .build();
+        postRepository.save(post);
+
+        //expected
+        mockMvc.perform(get("/posts/{postId}", post.getId())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(post.getId()))
+                .andExpect(jsonPath("$.title").value("foo"))
+                .andExpect(jsonPath("$.content").value("bar"))
+                .andDo(print());
     }
 }

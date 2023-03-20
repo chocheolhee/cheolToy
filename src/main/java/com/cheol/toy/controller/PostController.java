@@ -2,6 +2,7 @@ package com.cheol.toy.controller;
 
 import com.cheol.toy.domain.Post;
 import com.cheol.toy.request.PostCreate;
+import com.cheol.toy.request.PostEdit;
 import com.cheol.toy.response.PostResponse;
 import com.cheol.toy.service.PostService;
 import jakarta.validation.Valid;
@@ -64,5 +65,10 @@ public class PostController {
     @GetMapping("/posts")
     public List<PostResponse> getList(Pageable pageable) {
         return postService.getList(pageable);
+    }
+
+    @PatchMapping("/posts/{postId}")
+    public void edit(@PathVariable Long postId, @RequestBody @Valid PostEdit request) {
+        postService.edit(postId, request);
     }
 }

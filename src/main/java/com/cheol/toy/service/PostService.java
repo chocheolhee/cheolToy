@@ -1,9 +1,12 @@
 package com.cheol.toy.service;
 
 import com.cheol.toy.domain.Post;
+import com.cheol.toy.domain.PostEditor;
 import com.cheol.toy.repository.PostRepository;
 import com.cheol.toy.request.PostCreate;
+import com.cheol.toy.request.PostEdit;
 import com.cheol.toy.response.PostResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -53,4 +56,18 @@ public class PostService {
      * DB -> 애플리케이션 서버로 전달하는 시간, 트래픽 비용 등이 발생할 수 있다.
      * 페이징!
      */
+
+    @Transactional
+    public void edit(Long id, PostEdit postEdit) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+
+        PostEditor.PostEditorBuilder postEditorBuilder = post.toEditor();
+
+        PostEditor postEditor = postEditorBuilder.title(postEdit.getTitle())
+                .content(postEdit.getContent())
+                .build();
+
+        post.edit(postEditor);
+    }
 }

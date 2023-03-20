@@ -3,6 +3,7 @@ package com.cheol.toy.service;
 import com.cheol.toy.domain.Post;
 import com.cheol.toy.repository.PostRepository;
 import com.cheol.toy.request.PostCreate;
+import com.cheol.toy.request.PostEdit;
 import com.cheol.toy.response.PostResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -121,4 +122,30 @@ class PostServiceTest {
         assertEquals("제목25", posts.get(4).getTitle());
 
     }
+
+    @Test
+    @DisplayName("글 수정")
+    void test5() {
+        //given
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .build();
+
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("아이폰")
+                .content("갤럭시")
+                .build();
+
+        //when
+        postService.edit(post.getId(),postEdit);
+
+        //then
+        Post changePost = postRepository.findById(post.getId())
+                .orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다. id=" + post.getId()));
+        assertEquals("아이폰", changePost.getTitle());
+    }
+
 }

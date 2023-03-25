@@ -1,11 +1,11 @@
 package com.cheol.toy.service;
 
 import com.cheol.toy.domain.Post;
+import com.cheol.toy.exception.PostNotFound;
 import com.cheol.toy.repository.PostRepository;
 import com.cheol.toy.request.PostCreate;
 import com.cheol.toy.request.PostEdit;
 import com.cheol.toy.response.PostResponse;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,15 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.data.domain.Sort.Direction.*;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @SpringBootTest
 class PostServiceTest {
@@ -140,7 +138,7 @@ class PostServiceTest {
                 .build();
 
         //when
-        postService.edit(post.getId(),postEdit);
+        postService.edit(post.getId(), postEdit);
 
         //then
         Post changePost = postRepository.findById(post.getId())
@@ -164,6 +162,60 @@ class PostServiceTest {
 
         //then
         assertEquals(0, postRepository.count());
+    }
 
+    @Test
+    @DisplayName("글 1개 조회 - 존재하지 않는 글")
+    void test7() {
+        //given
+        Post post = Post.builder()
+                .title("아이폰")
+                .content("갤럭시")
+                .build();
+        postRepository.save(post);
+
+        // expected
+        assertThrows(PostNotFound.class, () -> {
+            postService.get(post.getId() + 1L);
+        });
+    }
+
+    @Test
+    @DisplayName("글 수정 - 존재하지 않는 글")
+    void test8() {
+        //given
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .build();
+
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("아이폰")
+                .content("갤럭시")
+                .build();
+
+        //when
+        assertThrows(PostNotFound.class, () -> {
+            postService.edit(post.getId() + 1L,postEdit);
+        });
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 - 존재하지 않는 글")
+    void test9() {
+        //given
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .build();
+
+        postRepository.save(post);
+
+        // expected
+        assertThrows(PostNotFound.class, () -> {
+            postService.delete(post.getId() + 1L);
+        });
     }
 }

@@ -1,5 +1,6 @@
 package com.cheol.toy.request;
 
+import com.cheol.toy.exception.InvalidRequest;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +20,12 @@ public class PostCreate {
     public PostCreate(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    public void validate() {
+        if (title.contains("하이")) {
+            throw new InvalidRequest();
+        }
     }
 
     /**

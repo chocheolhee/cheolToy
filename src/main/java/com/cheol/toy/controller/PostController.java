@@ -1,6 +1,6 @@
 package com.cheol.toy.controller;
 
-import com.cheol.toy.domain.Post;
+import com.cheol.toy.exception.InvalidRequest;
 import com.cheol.toy.request.PostCreate;
 import com.cheol.toy.request.PostEdit;
 import com.cheol.toy.response.PostResponse;
@@ -9,7 +9,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -44,6 +43,7 @@ public class PostController {
      */
     @PostMapping("/posts")
     public void postV2(@RequestBody @Valid PostCreate request) {
+        request.validate();
         postService.write(request);
     }
 

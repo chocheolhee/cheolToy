@@ -146,7 +146,6 @@ class PostControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andDo(print());
-
     }
 
     @Test
@@ -164,6 +163,54 @@ class PostControllerTest {
         mockMvc.perform(delete("/posts/{postId}", post.getId())
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 게시글 조회")
+    void test8() throws Exception {
+        // expected
+        mockMvc.perform(get("/posts/{postId}", 1L)
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 게시글 수정")
+    void test9() throws Exception {
+        // given
+        PostEdit postEdit = PostEdit.builder()
+                .title("아이폰")
+                .content("갤럭시")
+                .build();
+
+        //expected
+        mockMvc.perform(patch("/posts/{postId}", 1L) // PATCH/posts/{postId}
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postEdit))
+                )
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("게시글 작성시 제목에 '하이'는 포함될 수 없다.")
+    void test10() throws Exception {
+
+        PostCreate request = PostCreate.builder()
+                .title("하이")
+                .content("아이폰")
+                .build();
+
+        String json = objectMapper.writeValueAsString(request);
+
+        // expected
+        mockMvc.perform(post("/posts")
+                        .contentType(APPLICATION_JSON)
+                        .content(json)
+                )
+                .andExpect(status().isBadRequest())
                 .andDo(print());
     }
 }
